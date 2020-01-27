@@ -1,14 +1,30 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import RecipeCard from "./../RecipeCard/RecipeCard";
+import store, { CLEAR_INPUT, DELETE_RECIPE } from '../../store';
 import "./Home.css";
 
 class Home extends Component {
   constructor(props) {
     super(props);
+    const reduxState = store.getState();
     this.state = {
-      recipes: []
+      recipes: reduxState.recipes
     };
+    console.log(this.state);
+  }
+
+  removeRecipe = (id) => {
+    store.dispatch({
+      type: DELETE_RECIPE,
+      payload: id
+    })
+  }
+
+  componentDidMount(){
+    store.dispatch({
+      type: CLEAR_INPUT
+    })
   }
 
   render() {
@@ -16,12 +32,14 @@ class Home extends Component {
       return (
         <RecipeCard
           key={i}
+          id={i}
           name={recipe.name}
           category={recipe.category}
           authorFirst={recipe.authorFirst}
           authorLast={recipe.authorLast}
           ingredients={recipe.ingredients}
           instructions={recipe.instructions}
+          removeRecipeFn={this.removeRecipe}
         />
       );
     });
